@@ -1,6 +1,6 @@
 package owendevita.nhlpredictor;
 
-import org.json.*;
+import java.util.HashMap;
 
 public class Main {
     
@@ -11,7 +11,9 @@ public class Main {
 	 * 
 	 */
 		
-		
+	API_Initializer api = new API_Initializer();
+	
+	HashMap<String, Integer> teamMap = api.teamList();
 		
     
 	}
