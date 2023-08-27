@@ -15,6 +15,8 @@ public class Main {
 	
 	HashMap<String, Integer> teamMap = api.teamList();
 		
+	System.out.println(teamMap);
+	
     int streak = api.getStreak(26);
     
     System.out.println(streak);

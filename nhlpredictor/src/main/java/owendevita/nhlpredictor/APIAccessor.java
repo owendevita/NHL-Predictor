@@ -7,8 +7,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Scanner;
-
 import org.json.*;
 
 public class APIAccessor {
@@ -21,7 +19,7 @@ public class APIAccessor {
 	 * @param url	a string URL to be turned into an URL object
 	 * @return	returns the given string URL as an URL object
 	 */
-	public URL urlCreator(String url) {
+	private URL urlCreator(String url) {
 		
 		try {
 			
@@ -46,7 +44,7 @@ public class APIAccessor {
 	 * @param url	a URL object to be used to open an HttpURLConnection
 	 * @return returns a HttpURLConnection object with request method set to get for the given URL.
 	 */
-	public HttpURLConnection httpConnectionCreator(URL url) {
+	private HttpURLConnection httpConnectionCreator(URL url) {
 		
 		try {
 			
@@ -79,7 +77,7 @@ public class APIAccessor {
 	 * @param urlConn	a HttpURLConnection to be read from
 	 * @return	returns a StringBuffer containing the JSON info from the API.
 	 */
-	public StringBuffer apiReader(HttpURLConnection urlConn) {
+	private StringBuffer apiReader(HttpURLConnection urlConn) {
         
 		try {
 			
@@ -142,6 +140,7 @@ public class APIAccessor {
 		return returnMap;
 		
 	}
+	
 	
 	
 	// specific team data below
@@ -208,7 +207,6 @@ public class APIAccessor {
         				
         			}
         			
-        			
         		}
             	
 			}
@@ -216,5 +214,7 @@ public class APIAccessor {
 		return null;
 		
 	}
+
+	
 	
 }
