@@ -11,10 +11,13 @@ public class Main {
 	 * 
 	 */
 		
-	API_Initializer api = new API_Initializer();
+	APIAccessor api = new APIAccessor();
 	
 	HashMap<String, Integer> teamMap = api.teamList();
 		
+    int streak = api.getStreak(26);
     
+    System.out.println(streak);
+	
 	}
 }
