@@ -27,6 +27,13 @@ public class Team {
 	
 	// internal private methods
 	
+	/**
+	 * Access the team's page via API and generates
+	 * a JSON object to hold the data, populating the
+	 * teamPage member variable.
+	 * 
+	 * Via https://statsapi.web.nhl.com/api/v1/teams/ID?expand=team.stats
+	 */
 	private void generateTeamPage() {
 		
 		URL teamURL = api.urlCreator("https://statsapi.web.nhl.com/api/v1/teams/" + this.teamID + "?expand=team.stats");
@@ -42,7 +49,11 @@ public class Team {
 		
 	}
 	
-	
+	/**
+	 * Specifically accesses the teamPage's "teamStats" section
+	 * to generate a JSON object to hold that data.
+	 * 
+	 */
 	private void generateTeamStats() {
 
         JSONObject statArray = teamPage.getJSONArray("teamStats").getJSONObject(0);
@@ -52,6 +63,11 @@ public class Team {
         
 	}
 	
+	/**
+	 * Utilizes the teamStats information to generate
+	 * a new TeamRecord and populate the teamRecord member variable
+	 * 
+	 */
 	private void generateTeamRecord() {
 		
 		TeamRecord record = new TeamRecord();
@@ -64,7 +80,13 @@ public class Team {
 		
 	}	
 	
-	
+	/**
+	 * Sets the teamStandings member variable to the specific JSON object pertaining
+	 * to that team's standings from the standings list.
+	 * 
+	 *  Via https://statsapi.web.nhl.com/api/v1/standings
+	 *
+	 */
 	private void generateTeamStandings() {
 		
 		URL standingsURL = api.urlCreator("https://statsapi.web.nhl.com/api/v1/standings");
@@ -106,7 +128,7 @@ public class Team {
 	}
 	
 	
-	// getters / setters
+	// member variable getters / setters
 
 	public int getTeamID() {
 		
@@ -119,7 +141,7 @@ public class Team {
 	}
 	
 	
-	// other methods
+	// API methods
 	
 	/**
 	 * Finds and outputs the current game streak of a team.

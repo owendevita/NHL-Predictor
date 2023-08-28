@@ -5,15 +5,10 @@ import java.util.HashMap;
 public class Main {
     
 	public static void main( String[] args ) {
-        
-	/*
-	 * Access API, set up JSON reading and format data to strings for initial testing.
-	 * 
-	 */
-		
+       
 	APIAccessor api = new APIAccessor();
 	
-	HashMap<String, Integer> teamMap = api.teamList();
+	HashMap<String, Integer> teamIDMap = api.teamList();
     
     Team team1 = new Team(26);
     
