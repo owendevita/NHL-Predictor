@@ -14,12 +14,12 @@ public class Main {
 	APIAccessor api = new APIAccessor();
 	
 	HashMap<String, Integer> teamMap = api.teamList();
-		
-	System.out.println(teamMap);
-	
-    int streak = api.getStreak(26);
     
-    System.out.println(streak);
+    Team team1 = new Team(26);
+    
+    System.out.println(team1.getTeamRecord());
+    System.out.println(team1.getStreak());
+    System.out.println(team1.averageSavePctg());
 	
 	}
 }
