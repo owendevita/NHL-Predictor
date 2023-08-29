@@ -127,9 +127,6 @@ public class APIAccessor {
             	
             	if (teamObject.getBoolean("active")) {
             		
-//            		System.out.println(teamObject.getString("name") + " : " + teamObject.getInt("id")
-//            		+ " added to map.");
-            		
             		returnMap.put(teamObject.getString("name"), teamObject.getInt("id"));
             		
             	}
