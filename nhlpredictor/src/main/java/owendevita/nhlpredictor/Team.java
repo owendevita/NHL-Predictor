@@ -2,6 +2,7 @@ package owendevita.nhlpredictor;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 import org.json.*;
 
@@ -15,6 +16,7 @@ public class Team {
 	private JSONObject teamStandings;
 	private TeamRecord teamRecord;
 	private APIAccessor api = new APIAccessor();
+	private ArrayList<ArrayList<Player>> roster = new ArrayList<>();
 	
 	public Team(int teamID) {
 		
@@ -23,6 +25,7 @@ public class Team {
 		generateTeamStats();
 		generateTeamRecord();
 		generateTeamStandings();
+		generateTeamRoster();
 	}
 	
 	// internal private methods
@@ -127,6 +130,58 @@ public class Team {
 		
 	}
 	
+	private void generateTeamRoster() {
+		
+		URL rosterURL = api.urlCreator("https://statsapi.web.nhl.com/api/v1/teams/" + teamID + "/roster");
+		HttpURLConnection rosterUrlConn = api.httpConnectionCreator(rosterURL);		
+		StringBuffer rosterString = api.apiReader(rosterUrlConn);
+		
+		JSONObject rosterJson = new JSONObject(rosterString.toString());
+	    JSONArray rosterJsonArray = rosterJson.getJSONArray("roster");
+	    
+	    
+	    roster.add(new ArrayList<Player>());
+	    roster.add(new ArrayList<Player>());
+	    roster.add(new ArrayList<Player>());
+	     
+	    for(int i = 0; i < rosterJsonArray.length(); i++) {
+	    	 
+	    	 JSONObject currentPlayer = rosterJsonArray.getJSONObject(i);
+	    	 JSONObject playerInfo = currentPlayer.getJSONObject("person");
+	    	 JSONObject positionInfo = currentPlayer.getJSONObject("position");
+	    	 
+	    	 switch(positionInfo.getString("type")) {
+	    	 	
+	    	 	case "Forward":
+	    	 		
+	    	 		Forward forward = new Forward(playerInfo.getInt("id"), playerInfo.getString("fullName"));
+	    	 		
+	    	 		roster.get(0).add(forward);
+	    	 		
+	    	 		break;
+	    	 	
+	    	 	case "Defenseman":
+	    	 		
+	    	 		Defense defenseman = new Defense(playerInfo.getInt("id"), playerInfo.getString("fullName"));
+	    	 		
+	    	 		roster.get(1).add(defenseman);
+	    	 		
+	    	 		break;
+	    	 		
+	    	 	case "Goalie":
+	    	 		
+	    	 		Goalie goalie = new Goalie(playerInfo.getInt("id"), playerInfo.getString("fullName"));
+	    	 		
+	    	 		roster.get(2).add(goalie);
+	    	 		
+	    	 		break;
+	    	 
+	    	 }
+	    	 	 
+	     }
+	    
+	}
+	
 	
 	// member variable getters / setters
 
@@ -140,6 +195,10 @@ public class Team {
 		return teamRecord;
 	}
 	
+	public ArrayList<ArrayList<Player>> getRoster() {
+		
+		return roster;
+	}
 	
 	// API methods
 	
@@ -170,5 +229,21 @@ public class Team {
 	}
 	
 	
+	public Double goalsPerGameRate() {
+		
+		
+		return teamStats.getDouble("goalsPerGame");	
+	}
+	
+	public Double faceoffWinPercentage() {
+		
+		return Double.valueOf(teamStats.getString("faceOffWinPercentage"));
+		
+	}
+	
+	public Double teamGoalsAgainstAvg() {
+		
+		return teamStats.getDouble("goalsAgainstPerGame");
+	}
 	
 }

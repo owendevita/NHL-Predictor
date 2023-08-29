@@ -1,5 +1,6 @@
 package owendevita.nhlpredictor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Main {
@@ -15,6 +16,10 @@ public class Main {
     System.out.println(team1.getTeamRecord());
     System.out.println(team1.getStreak());
     System.out.println(team1.averageSavePctg());
+    System.out.println(team1.goalsPerGameRate());
+    System.out.println(team1.faceoffWinPercentage());
+    
+
 	
 	}
 }
