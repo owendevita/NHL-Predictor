@@ -130,6 +130,13 @@ public class Team {
 		
 	}
 	
+	
+	/**
+	 * Sets the roster member variable to an ArrayList of Forwards, Defenseman, and Goalie. Each
+	 * player object will contain their personal stats, as well as their identifying
+	 * ID number.
+	 * 
+	 */
 	private void generateTeamRoster() {
 		
 		URL rosterURL = api.urlCreator("https://statsapi.web.nhl.com/api/v1/teams/" + teamID + "/roster");
@@ -157,6 +164,8 @@ public class Team {
 	    	 		Forward forward = new Forward(playerInfo.getInt("id"), playerInfo.getString("fullName"));
 	    	 		
 	    	 		roster.get(0).add(forward);
+	    	 		
+	    	 		forward.getStats();
 	    	 		
 	    	 		break;
 	    	 	

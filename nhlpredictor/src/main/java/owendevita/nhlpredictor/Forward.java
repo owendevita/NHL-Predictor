@@ -14,6 +14,11 @@ public class Forward extends Player {
 	@Override
 	public HashMap<String, Double> getStats() {
 		
+		
+		//sometimes null if player doesnt have stats yet, handle this
+		System.out.println(super.getStatJson(super.getPlayerID()).getInt("goals"));
+		
+		
 		return null;
 	}
 

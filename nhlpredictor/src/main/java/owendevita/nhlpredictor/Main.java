@@ -18,7 +18,6 @@ public class Main {
     System.out.println(team1.averageSavePctg());
     System.out.println(team1.goalsPerGameRate());
     System.out.println(team1.faceoffWinPercentage());
-    
 
 	
 	}
