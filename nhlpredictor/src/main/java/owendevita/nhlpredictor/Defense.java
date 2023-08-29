@@ -1,7 +1,5 @@
 package owendevita.nhlpredictor;
 
-import java.util.HashMap;
-
 public class Defense extends Player {
 
 	public Defense(int playerID, String playerName) {
@@ -10,10 +8,5 @@ public class Defense extends Player {
 		
 	}
 
-	@Override
-	public HashMap<String, Double> getStats() {
-		
-		return null;
-	}
 
 }

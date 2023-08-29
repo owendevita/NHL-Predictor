@@ -127,7 +127,7 @@ public class APIAccessor {
             	
             	if (teamObject.getBoolean("active")) {
             		
-            		returnMap.put(teamObject.getString("name"), teamObject.getInt("id"));
+            		returnMap.put(teamObject.getString("name").toLowerCase(), teamObject.getInt("id"));
             		
             	}
             

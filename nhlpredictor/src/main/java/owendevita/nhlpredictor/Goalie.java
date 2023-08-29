@@ -1,7 +1,5 @@
 package owendevita.nhlpredictor;
 
-import java.util.HashMap;
-
 public class Goalie extends Player {
 
 	public Goalie(int playerID, String playerName) {
@@ -10,11 +8,5 @@ public class Goalie extends Player {
 		
 	}
 
-	@Override
-	public HashMap<String, Double> getStats() {
-		
-		return null;
-	
-	}
 
 }
