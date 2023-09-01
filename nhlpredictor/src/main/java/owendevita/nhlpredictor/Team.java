@@ -3,6 +3,7 @@ package owendevita.nhlpredictor;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.json.*;
 
@@ -11,6 +12,7 @@ public class Team {
 	private int teamID;
 	private int conferenceID;
 	private int divisionID;
+	public int year = 20222023;
 	private JSONObject teamStats;
 	private JSONObject teamPage;
 	private JSONObject teamStandings;
@@ -25,7 +27,18 @@ public class Team {
 		generateTeamStats();
 		generateTeamRecord();
 		generateTeamStandings();
-		generateTeamRoster();
+		// generateTeamRoster();
+	}
+	
+	public Team(int teamID, int year) {
+		
+		this.year = year;
+		this.teamID = teamID;
+		generateTeamPage();
+		generateTeamStats();
+		generateTeamRecord();
+		generateTeamStandings();
+		// generateTeamRoster();
 	}
 	
 	// internal private methods
@@ -39,7 +52,7 @@ public class Team {
 	 */
 	private void generateTeamPage() {
 		
-		URL teamURL = api.urlCreator("https://statsapi.web.nhl.com/api/v1/teams/" + this.teamID + "?expand=team.stats");
+		URL teamURL = api.urlCreator("https://statsapi.web.nhl.com/api/v1/teams/" + this.teamID + "?expand=team.stats&season=" + year);
 		HttpURLConnection teamUrlConn = api.httpConnectionCreator(teamURL);
 		StringBuffer teamString = api.apiReader(teamUrlConn);
 		
@@ -92,7 +105,7 @@ public class Team {
 	 */
 	private void generateTeamStandings() {
 		
-		URL standingsURL = api.urlCreator("https://statsapi.web.nhl.com/api/v1/standings");
+		URL standingsURL = api.urlCreator("https://statsapi.web.nhl.com/api/v1/standings?season=" + year);
 		HttpURLConnection standingsUrlConn = api.httpConnectionCreator(standingsURL);		
 		StringBuffer standingsString = api.apiReader(standingsUrlConn);
 		
@@ -128,6 +141,67 @@ public class Team {
         	
 		}
 		
+	}
+	
+	public ArrayList<ArrayList<String>> generateTeamSchedule() {
+		
+		ArrayList<ArrayList<String>> returnList = new ArrayList<>();
+		
+		URL scheduleURL = api.urlCreator("https://statsapi.web.nhl.com/api/v1/schedule?season=" + year +"&teamId=" + teamID + "&gameType=R");
+		HttpURLConnection scheduleUrlConn = api.httpConnectionCreator(scheduleURL);		
+		StringBuffer scheduleString = api.apiReader(scheduleUrlConn);
+		
+        JSONObject scheduleJson = new JSONObject(scheduleString.toString());
+        JSONArray scheduleJsonArray = scheduleJson.getJSONArray("dates");
+		
+        for(int i = 0; i < scheduleJsonArray.length(); i++) {
+        	
+        	String date;
+        	String location;
+        	String outcome; // 1 = win, 0 = loss
+        	String opponentID;
+        	
+        	JSONObject currentGame = scheduleJsonArray.getJSONObject(i);
+        	
+        	date = currentGame.getString("date");
+        	
+        	JSONArray gameData = currentGame.getJSONArray("games");
+        	JSONObject gameDataObject = gameData.getJSONObject(0);
+        	
+        	JSONObject gameInfo = gameDataObject.getJSONObject("teams");
+        	
+        	JSONObject awayInfo = gameInfo.getJSONObject("away");
+			JSONObject homeInfo = gameInfo.getJSONObject("home");
+			
+			if (homeInfo.getJSONObject("team").getInt("id") == teamID) {
+				
+				location = "Home";
+				
+				outcome = (awayInfo.getInt("score") > homeInfo.getInt("score")) ? "0" : "1";
+				
+				opponentID = String.valueOf(awayInfo.getJSONObject("team").getInt("id"));
+				
+			} else {
+				
+				location = "Away";
+			
+				outcome = (awayInfo.getInt("score") > homeInfo.getInt("score")) ? "1" : "0";
+				
+				opponentID = String.valueOf(homeInfo.getJSONObject("team").getInt("id"));
+				
+			}
+           
+			ArrayList<String> addList = new ArrayList<>();
+			addList.add(date);
+			addList.add(location);
+			addList.add(outcome);
+			addList.add(opponentID);
+			
+	        returnList.add(addList);
+        }
+		
+        return returnList;
+        
 	}
 	
 	
@@ -192,6 +266,11 @@ public class Team {
 	}
 	
 	
+	private String generateString(Object o) {
+		
+		return String.valueOf(o);
+	}
+	
 	// member variable getters / setters
 
 	public int getTeamID() {
@@ -234,25 +313,72 @@ public class Team {
 	public Double averageSavePctg() {
         
         return teamStats.getDouble("savePctg");
-		
 	}
 	
 	
-	public Double goalsPerGameRate() {
-		
+	public Double goalsPerGame() {
 		
 		return teamStats.getDouble("goalsPerGame");	
 	}
 	
+	public Double goalsAgainstPerGame() {
+		
+		return teamStats.getDouble("goalsAgainstPerGame");	
+	}
+	
 	public Double faceoffWinPercentage() {
 		
-		return Double.valueOf(teamStats.getString("faceOffWinPercentage"));
+		return Double.valueOf(teamStats.getString("faceOffWinPercentage"));	
+	}
+	
+	public Double shotsPerGame() {
+		
+		return teamStats.getDouble("shotsPerGame");
+	}
+	
+	public Double shotsAllowed() {
+		
+		return teamStats.getDouble("shotsAllowed");
+	}
+	
+	public Double shootingPercentage() {
+		
+		return teamStats.getDouble("shootingPctg");
+	}
+	
+	public Double ptPctg() {
+		
+		return Double.valueOf(teamStats.getString("ptPctg"));	
+	}
+	
+	public String[] allStats() {
+		
+		return new String[] {
+			generateString(ptPctg()),
+			generateString(shootingPercentage()),
+			generateString(shotsAllowed()),
+			generateString(shotsPerGame()),
+			generateString(faceoffWinPercentage()),
+			generateString(goalsAgainstPerGame()),
+			generateString(goalsPerGame()),
+			generateString(averageSavePctg())
+		};
 		
 	}
 	
-	public Double teamGoalsAgainstAvg() {
+	public ArrayList<ArrayList<String>> csvData() {
 		
-		return teamStats.getDouble("goalsAgainstPerGame");
+		ArrayList<ArrayList<String>> returnList = generateTeamSchedule();
+		
+		for(ArrayList<String> list : returnList) {
+			
+			list.addAll(Arrays.asList(allStats()));
+			
+		}
+		
+		return returnList;
+		
+		
 	}
 	
 }

@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import org.json.*;
 
@@ -136,6 +137,35 @@ public class APIAccessor {
 
 		return returnMap;
 		
+	}
+	
+	public ArrayList<Integer> idList(int year){
+		
+		ArrayList<Integer> returnList = new ArrayList<>();
+		URL teamsURL = urlCreator("https://statsapi.web.nhl.com/api/v1/teams?season=" + year);
+		HttpURLConnection urlConn = httpConnectionCreator(teamsURL);
+		
+		StringBuffer informationString = apiReader(urlConn);
+
+		
+        JSONObject json = new JSONObject(informationString.toString());
+                
+        JSONArray jsonArray = json.getJSONArray("teams");
+            
+            
+            for (int i = 0; i < jsonArray.length(); i++) {
+            	
+            	JSONObject teamObject = (JSONObject) jsonArray.get(i);
+            	
+            	if (teamObject.getBoolean("active")) {
+            		
+            		returnList.add(teamObject.getInt("id"));
+            		
+            	}
+            
+            	
+			}
+            return returnList;
 	}
 	
 }

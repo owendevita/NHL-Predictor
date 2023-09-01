@@ -31,8 +31,6 @@ public abstract class Player {
 		
 		} else {
 			
-			System.out.println(getStatJson(getPlayerID()).getInt("goals"));
-			
 			return getStatJson(getPlayerID());
 			
 		}
