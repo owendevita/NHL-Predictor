@@ -26,7 +26,7 @@ public class DataHandler {
 		
 		}
 		
-		String[] header = {"Date", "Location", "Outcome", "OpponentID", "Point Percentage", "Shooting Percentage", "Shots Allowed / Game",
+		String[] header = {"Date", "Team", "Location", "Outcome", "OpponentID", "Point Percentage", "Shooting Percentage", "Shots Allowed / Game",
 				"Shots / Game", "Faceoff Win Percentage", "Goals Against / Game", "Goals / Game", "Save Percentage"};
 		
 		writer.writeNext(header);

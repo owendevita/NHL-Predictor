@@ -193,6 +193,7 @@ public class Team {
            
 			ArrayList<String> addList = new ArrayList<>();
 			addList.add(date);
+			addList.add(String.valueOf(teamID));
 			addList.add(location);
 			addList.add(outcome);
 			addList.add(opponentID);
