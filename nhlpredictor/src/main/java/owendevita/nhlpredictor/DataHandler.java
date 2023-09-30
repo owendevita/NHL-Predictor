@@ -3,10 +3,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
 public class DataHandler {
+	
+	public static int rows = 0;
 	
 	CSVWriter writer;
 	
@@ -26,7 +29,7 @@ public class DataHandler {
 		
 		}
 		
-		String[] header = {"Date", "Team", "Location", "Outcome", "OpponentID", "Point Percentage", "Shooting Percentage", "Shots Allowed / Game",
+		String[] header = {"Index", "Date", "Team", "Location", "Outcome", "OpponentID", "Point Percentage", "Shooting Percentage", "Shots Allowed / Game",
 				"Shots / Game", "Faceoff Win Percentage", "Goals Against / Game", "Goals / Game", "Save Percentage"};
 		
 		writer.writeNext(header);
@@ -39,13 +42,15 @@ public class DataHandler {
 		
 		ArrayList<ArrayList<String>> infoList = team.csvData();
 		
-		
 		for (ArrayList<String> list : infoList) {
 			
-			String[] info = new String[infoList.size()];
+			list.add(0, Integer.toString(rows));
+			
+			String[] info = new String[list.size()];
 			info = list.toArray(info);
 			
 			writer.writeNext(info);
+			rows++;
 		
 		}
 			
