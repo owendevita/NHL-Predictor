@@ -4,8 +4,10 @@ public class Main {
     
 	public static void main( String[] args ) {
        
+		CSVCreator csvCreator = new CSVCreator();
 		
-		CSVCreator.createOutputCSV(2000, 2001);
+		csvCreator.createOutputCSV(2000, 2001);
+		csvCreator.createTestCSV(2021, 2022);
 	
 	}
 }

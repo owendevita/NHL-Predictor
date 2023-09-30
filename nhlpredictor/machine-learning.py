@@ -4,13 +4,13 @@ from sklearn.metrics import precision_score
 from sklearn.ensemble import RandomForestClassifier
 
 matches = pd.read_csv("output.csv", index_col=0, header=0, engine="python", skip_blank_lines=True, on_bad_lines='skip')
-matches["Date"] = pd.to_datetime(matches["Date"])
+matches["Date"] = pd.to_datetime(matches["Date"], format="mixed")
 matches["Location_code"] = matches["Location"].astype("category").cat.codes
 
 matches = matches.dropna()
 
-test = pd.read_csv("test.csv", index_col=0, header=0)
-test["Date"] = pd.to_datetime(test["Date"])
+test = pd.read_csv("test.csv", index_col=0, header=0, engine="python", skip_blank_lines=True, on_bad_lines='skip')
+test["Date"] = pd.to_datetime(test["Date"], format="mixed")
 test["Location_code"] = test["Location"].astype("category").cat.codes
 
 test = test.dropna()

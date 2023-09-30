@@ -9,19 +9,27 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 public class DataHandler {
 	
-	public static int rows = 0;
+	public static int outputRows = 0;
+	public static int testRows = 0;
 	
-	CSVWriter writer;
+	CSVWriter outputWriter;
+	CSVWriter testWriter;
+	String[] header;
 	
 	public DataHandler() {
 		
-		File file = new File("output.csv");
-		FileWriter outputFile;
+		File outputFile = new File("output.csv");
+		File testFile = new File("test.csv");
+		FileWriter outputFileWriter;
+		FileWriter testFileWriter;
 		
 		try {
 			
-			outputFile = new FileWriter(file);
-			writer = new CSVWriter(outputFile);
+			outputFileWriter = new FileWriter(outputFile);
+			outputWriter = new CSVWriter(outputFileWriter);
+			
+			testFileWriter = new FileWriter(testFile);
+			testWriter = new CSVWriter(testFileWriter);
 			
 		} catch (IOException e) {
 			System.out.println("Unable to write to file.");
@@ -29,38 +37,53 @@ public class DataHandler {
 		
 		}
 		
-		String[] header = {"Index", "Date", "Team", "Location", "Outcome", "OpponentID", "Point Percentage", "Shooting Percentage", "Shots Allowed / Game",
+		header = new String[]{"Index", "Date", "Team", "Location", "Outcome", "OpponentID", "Point Percentage", "Shooting Percentage", "Shots Allowed / Game",
 				"Shots / Game", "Faceoff Win Percentage", "Goals Against / Game", "Goals / Game", "Save Percentage"};
 		
-		writer.writeNext(header);
+		outputWriter.writeNext(header);
+		testWriter.writeNext(header);
 		
-		System.out.println("Wrote header.");
 		
 	}
 	
-	public void writeCSVFile(Team team) {
+	public void writeOutputCSVFile(Team team) {
+		
 		
 		ArrayList<ArrayList<String>> infoList = team.csvData();
 		
 		for (ArrayList<String> list : infoList) {
 			
-			list.add(0, Integer.toString(rows));
+			list.add(0, Integer.toString(outputRows));
+			
+			String[] info = new String[list.size()];
+			info = list.toArray(info);
+		
+			outputWriter.writeNext(info);
+			
+			outputRows++;
+		
+		}
+		
+	}
+	
+	public void writeTestCSVFile(Team team) {
+		
+		ArrayList<ArrayList<String>> infoList = team.csvData();
+		
+		for (ArrayList<String> list : infoList) {
+			
+			list.add(0, Integer.toString(testRows));
 			
 			String[] info = new String[list.size()];
 			info = list.toArray(info);
 			
-			writer.writeNext(info);
-			rows++;
+			testWriter.writeNext(info);
+			
+			testRows++;
 		
 		}
-			
-
-		System.out.println("Wrote team " + team.getTeamID() + " year " + team.year + ".");
 		
 	}
-	
-	
-	
 	
 	
 }

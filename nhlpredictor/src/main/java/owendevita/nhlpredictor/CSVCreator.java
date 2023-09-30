@@ -5,14 +5,19 @@ import java.util.HashMap;
 
 public class CSVCreator {
 	
-	public static void createOutputCSV(int year1, int year2) {
+	private APIAccessor api = new APIAccessor();
+	private DataHandler dataHandler = new DataHandler();
+	private HashMap<String, Integer> teamIDMap = api.teamList();
+	
+	public CSVCreator() {
+
+		teamIDMap.remove("seattle kraken");
+	}
+	
+	public  void createOutputCSV(int year1, int year2) {
 		
-		APIAccessor api = new APIAccessor();
-		DataHandler dataHandler = new DataHandler();
+		System.out.println("Writing output CSV...");
 		
-		HashMap<String, Integer> teamIDMap = api.teamList();
-	    teamIDMap.remove("seattle kraken");
-	    
 	    for(; year2 < 2022; year2++) {
 	    	
 	    	int yearInt = Integer.valueOf("" + year1 + year2);
@@ -23,18 +28,13 @@ public class CSVCreator {
 	    		continue;
 	    	}
 	    	
-	    	System.out.println("Starting year " + yearInt + ".");
-	    	
-	    	
 	    	ArrayList<Integer> teamIDList = api.idList(yearInt);
 	    	
 	    	for(int teamID : teamIDList) {
 	    		
 	    		Team team = new Team(teamID, yearInt);
-	    		
-	    		System.out.println("Team " + teamID + " created for year " + yearInt);
-	    		
-	    		dataHandler.writeCSVFile(team);
+	    		    		
+	    		dataHandler.writeOutputCSVFile(team);
 	    		
 	    	}
 	    	
@@ -45,6 +45,40 @@ public class CSVCreator {
 		
 	    System.out.println("Output CSV completed.");
 	    
+	}
+	
+	public void createTestCSV(int year1, int year2) {
+		
+		System.out.println("Writing test CSV...");
+		
+		for(; year2 < 2024; year2++) {
+		    	
+		    	int yearInt = Integer.valueOf("" + year1 + year2);
+		    	
+		    	if(yearInt == 20042005) {
+		    		
+		    		year1++;
+		    		continue;
+		    	}
+		    	
+		    	ArrayList<Integer> teamIDList = api.idList(yearInt);
+		    	
+		    	for(int teamID : teamIDList) {
+		    		
+		    		Team team = new Team(teamID, yearInt);
+		    		
+		    		dataHandler.writeTestCSVFile(team);
+		    		
+		    	}
+		    	
+		    	year1++;
+		    	
+		    }
+			
+			
+		    System.out.println("Test CSV completed.");
+		
+		
 	}
 	
 }
