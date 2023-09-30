@@ -1,8 +1,9 @@
 import pandas as pd
+import csv
 from sklearn.metrics import precision_score
 from sklearn.ensemble import RandomForestClassifier
 
-matches = pd.read_csv("output.csv", index_col=0, header=0)
+matches = pd.read_csv("output.csv", index_col=0, header=0, engine="python", skip_blank_lines=True, on_bad_lines='skip')
 matches["Date"] = pd.to_datetime(matches["Date"])
 matches["Location_code"] = matches["Location"].astype("category").cat.codes
 
