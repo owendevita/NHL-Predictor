@@ -143,6 +143,101 @@ public class Team {
 		
 	}
 	
+	
+	public ArrayList<String> gameStats(int gameID, boolean home){
+		
+		ArrayList<String> returnList = new ArrayList<>();
+		
+		URL gameURL = api.urlCreator("https://statsapi.web.nhl.com/api/v1/game/" + gameID +"/boxscore");
+		HttpURLConnection gameUrlConn = api.httpConnectionCreator(gameURL);		
+		StringBuffer gameString = api.apiReader(gameUrlConn);
+		
+        JSONObject gameJson = new JSONObject(gameString.toString());
+		JSONObject gameJsonObject = gameJson.getJSONObject("teams");
+		
+		
+		String goalieID;
+		String ppOpportunities;
+		String ppPercentage;
+		String faceOffPercentage;
+		String savePercentage;
+		String shotsFor;
+		String shotsAgainst;
+		String penaltyMinutes;
+		String pkPercentage;
+		
+		
+		JSONObject teamObject = (home) ? gameJsonObject.getJSONObject("home") : gameJsonObject.getJSONObject("away");
+		JSONObject opponentObject = (home) ? gameJsonObject.getJSONObject("away") : gameJsonObject.getJSONObject("home");
+		
+		JSONObject statObject = teamObject.getJSONObject("teamStats").getJSONObject("teamSkaterStats");
+		JSONObject opponentStatObject = opponentObject.getJSONObject("teamStats").getJSONObject("teamSkaterStats");
+		
+		ppOpportunities = Integer.toString(statObject.getInt("powerPlayOpportunities"));
+		ppPercentage = statObject.getString("powerPlayPercentage");
+		faceOffPercentage = statObject.getString("faceOffWinPercentage");
+		shotsFor = Integer.toString(statObject.getInt("shots"));
+		penaltyMinutes = Integer.toString(statObject.getInt("pim"));
+		
+		double opponentPPPercentage = Double.valueOf(opponentStatObject.getString("powerPlayPercentage"));
+		pkPercentage = Double.toString(100 - opponentPPPercentage);
+		
+		JSONArray goalies = teamObject.getJSONArray("goalies");
+		JSONObject players = teamObject.getJSONObject("players");
+		
+		if (goalies.length() > 1) {
+			
+			goalieID = Integer.toString(goalies.getInt(goalies.length()));
+			
+			double combinedSavePercentage = 0;
+			int combinedShotsAgainst = 0;
+			
+			for(int i = 0; i < goalies.length(); i++) {
+				String ID = Integer.toString(goalies.getInt(i));
+				JSONObject goalieObject = players.getJSONObject("ID" + ID);
+				
+				
+				JSONObject goalieStatObject = goalieObject.getJSONObject("stats").getJSONObject("goalieStats");
+				
+				combinedSavePercentage += goalieStatObject.getDouble("savePercentage");
+				combinedShotsAgainst += goalieStatObject.getInt("shots");
+				
+			}
+			
+			combinedSavePercentage /= goalies.length();
+			
+			savePercentage = Double.toString(combinedSavePercentage);
+			shotsAgainst = Integer.toString(combinedShotsAgainst);
+			
+		} else {
+			
+			goalieID = Integer.toString(goalies.getInt(0));
+			
+			JSONObject goalieObject = players.getJSONObject("ID" + goalieID);
+			
+			JSONObject goalieStatObject = goalieObject.getJSONObject("stats").getJSONObject("goalieStats");
+			
+			savePercentage = Double.toString(goalieStatObject.getDouble("savePercentage"));
+			
+			shotsAgainst = Integer.toString(goalieStatObject.getInt("shots"));
+			
+		}
+		
+		returnList.add(goalieID);
+		returnList.add(ppOpportunities);
+		returnList.add(ppPercentage);
+		returnList.add(faceOffPercentage);
+		returnList.add(savePercentage);
+		returnList.add(shotsFor);
+		returnList.add(shotsAgainst);
+		returnList.add(penaltyMinutes);
+		returnList.add(pkPercentage);
+		
+		return returnList;
+		
+	}
+	
+	
 	public ArrayList<ArrayList<String>> generateTeamSchedule() {
 		
 		ArrayList<ArrayList<String>> returnList = new ArrayList<>();
@@ -160,11 +255,16 @@ public class Team {
         	String location;
         	String outcome; // 1 = win, 0 = loss
         	String opponentID;
+        	String goalsAllowed;
+        	String goalsFor;
+        	
+        	
+        	boolean home = false;
         	
         	JSONObject currentGame = scheduleJsonArray.getJSONObject(i);
         	
         	date = currentGame.getString("date");
-        	
+
         	JSONArray gameData = currentGame.getJSONArray("games");
         	JSONObject gameDataObject = gameData.getJSONObject(0);
         	
@@ -173,23 +273,38 @@ public class Team {
         	JSONObject awayInfo = gameInfo.getJSONObject("away");
 			JSONObject homeInfo = gameInfo.getJSONObject("home");
 			
+			int awayScore = awayInfo.getInt("score");
+			int homeScore = homeInfo.getInt("score");
+			
 			if (homeInfo.getJSONObject("team").getInt("id") == teamID) {
 				
 				location = "Home";
 				
-				outcome = (awayInfo.getInt("score") > homeInfo.getInt("score")) ? "0" : "1";
+				home = true;
+				
+				outcome = (awayScore > homeScore) ? "0" : "1";
+				
+				goalsAllowed = Integer.toString(awayScore);
+				goalsFor = Integer.toString(homeScore);
 				
 				opponentID = String.valueOf(awayInfo.getJSONObject("team").getInt("id"));
+				
 				
 			} else {
 				
 				location = "Away";
 			
-				outcome = (awayInfo.getInt("score") > homeInfo.getInt("score")) ? "1" : "0";
+				outcome = (awayScore > homeScore) ? "1" : "0";
+				
+				goalsAllowed = Integer.toString(homeScore);
+				goalsFor = Integer.toString(awayScore);
+
 				
 				opponentID = String.valueOf(homeInfo.getJSONObject("team").getInt("id"));
 				
 			}
+			
+			int gameID = currentGame.getInt("gamePk"); // to get more specific stats about the game
            
 			ArrayList<String> addList = new ArrayList<>();
 			addList.add(date);
@@ -197,6 +312,9 @@ public class Team {
 			addList.add(location);
 			addList.add(outcome);
 			addList.add(opponentID);
+			addList.add(goalsFor);
+			addList.add(goalsAllowed);
+			addList.addAll(gameStats(gameID, home));
 			
 	        returnList.add(addList);
         }
@@ -306,76 +424,10 @@ public class Team {
 		
 	}
 	
-	/**
-	 * Outputs the average save percentage.
-	 *
-	 * @return	a double containing the average save percentage of the team
-	 */
-	public Double averageSavePctg() {
-        
-        return teamStats.getDouble("savePctg");
-	}
-	
-	
-	public Double goalsPerGame() {
-		
-		return teamStats.getDouble("goalsPerGame");	
-	}
-	
-	public Double goalsAgainstPerGame() {
-		
-		return teamStats.getDouble("goalsAgainstPerGame");	
-	}
-	
-	public Double faceoffWinPercentage() {
-		
-		return Double.valueOf(teamStats.getString("faceOffWinPercentage"));	
-	}
-	
-	public Double shotsPerGame() {
-		
-		return teamStats.getDouble("shotsPerGame");
-	}
-	
-	public Double shotsAllowed() {
-		
-		return teamStats.getDouble("shotsAllowed");
-	}
-	
-	public Double shootingPercentage() {
-		
-		return teamStats.getDouble("shootingPctg");
-	}
-	
-	public Double ptPctg() {
-		
-		return Double.valueOf(teamStats.getString("ptPctg"));	
-	}
-	
-	public String[] allStats() {
-		
-		return new String[] {
-			generateString(ptPctg()),
-			generateString(shootingPercentage()),
-			generateString(shotsAllowed()),
-			generateString(shotsPerGame()),
-			generateString(faceoffWinPercentage()),
-			generateString(goalsAgainstPerGame()),
-			generateString(goalsPerGame()),
-			generateString(averageSavePctg())
-		};
-		
-	}
 	
 	public ArrayList<ArrayList<String>> csvData() {
 		
 		ArrayList<ArrayList<String>> returnList = generateTeamSchedule();
-		
-		for(ArrayList<String> list : returnList) {
-			
-			list.addAll(Arrays.asList(allStats()));
-			
-		}
 		
 		return returnList;
 		

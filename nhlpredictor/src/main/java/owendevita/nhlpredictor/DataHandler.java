@@ -37,8 +37,8 @@ public class DataHandler {
 		
 		}
 		
-		header = new String[]{"Index", "Date", "Team", "Location", "Outcome", "OpponentID", "Point Percentage", "Shooting Percentage", "Shots Allowed / Game",
-				"Shots / Game", "Faceoff Win Percentage", "Goals Against / Game", "Goals / Game", "Save Percentage"};
+		header = new String[]{"Index", "Date", "Team", "Location", "Outcome", "OpponentID", "Goals For", "Goals Against", "Goalie ID", "PP Opportunities", 
+				"PP Percentage", "Face Off Percentage", "Save Percentage", "Shots For", "Shots Against", "PIM", "PK Percentage"};
 		
 		outputWriter.writeNext(header);
 		testWriter.writeNext(header);
