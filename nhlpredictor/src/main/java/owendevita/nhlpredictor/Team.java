@@ -155,6 +155,7 @@ public class Team {
         JSONObject gameJson = new JSONObject(gameString.toString());
 		JSONObject gameJsonObject = gameJson.getJSONObject("teams");
 		
+		System.out.println("Taking a look at gameID: " + gameID);
 		
 		String goalieID;
 		String ppOpportunities;
@@ -187,7 +188,7 @@ public class Team {
 		
 		if (goalies.length() > 1) {
 			
-			goalieID = Integer.toString(goalies.getInt(goalies.length()));
+			goalieID = Integer.toString(goalies.getInt(goalies.length() - 1));
 			
 			double combinedSavePercentage = 0;
 			int combinedShotsAgainst = 0;
@@ -199,7 +200,20 @@ public class Team {
 				
 				JSONObject goalieStatObject = goalieObject.getJSONObject("stats").getJSONObject("goalieStats");
 				
-				combinedSavePercentage += goalieStatObject.getDouble("savePercentage");
+				double goalieSavePercentage;
+				
+				try {
+					
+					goalieSavePercentage = goalieStatObject.getDouble("savePercentage");
+					
+				} catch (org.json.JSONException e) {
+					
+					System.out.println("EXCEPTION: NO GOALIE SAVE PERCENTAGE FOUND");
+					goalieSavePercentage = 100;
+					
+				}
+				
+				combinedSavePercentage += goalieSavePercentage;
 				combinedShotsAgainst += goalieStatObject.getInt("shots");
 				
 			}
@@ -304,7 +318,7 @@ public class Team {
 				
 			}
 			
-			int gameID = currentGame.getInt("gamePk"); // to get more specific stats about the game
+			int gameID = gameDataObject.getInt("gamePk"); // to get more specific stats about the game
            
 			ArrayList<String> addList = new ArrayList<>();
 			addList.add(date);

@@ -6,9 +6,12 @@ public class Main {
        
 //		CSVCreator csvCreator = new CSVCreator();
 //		
-//		csvCreator.createOutputCSV(2000, 2001);
+//		csvCreator.createOutputCSV(2010, 2011);
 //		csvCreator.createTestCSV(2021, 2022);
 		
+		GameCreator creator = new GameCreator();
+		
+		creator.generateSchedule();
 		
 	
 	}

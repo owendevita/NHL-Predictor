@@ -33,7 +33,7 @@ public class CSVCreator {
 	    	for(int teamID : teamIDList) {
 	    		
 	    		Team team = new Team(teamID, yearInt);
-	    		    		
+	    		System.out.println("Starting teamID: " + teamID);
 	    		dataHandler.writeOutputCSVFile(team);
 	    		
 	    	}
