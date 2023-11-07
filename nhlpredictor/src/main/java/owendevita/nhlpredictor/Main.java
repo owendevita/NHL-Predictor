@@ -9,10 +9,10 @@ public class Main {
 //		csvCreator.createOutputCSV(2010, 2011);
 //		csvCreator.createTestCSV(2021, 2022);
 		
-		GameCreator creator = new GameCreator();
+		DataHandler handler = new DataHandler();
 		
-		creator.generateSchedule();
+		//handler.writeOutputCSVFile();
+		//handler.writeTestCSVFile();
 		
-	
 	}
 }

@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 
 import au.com.bytecode.opencsv.CSVWriter;
 
@@ -43,6 +44,36 @@ public class DataHandler {
 		outputWriter.writeNext(header);
 		testWriter.writeNext(header);
 		
+		
+	}
+	
+	public void writeOutputCSVFile() {
+		
+		System.out.println("Writing output CSV file.");
+		
+		DataCreator dataCreator = new DataCreator();
+		
+		LinkedList<String[]> games = dataCreator.generateSchedule();
+		
+		for (String[] list : games) {
+			
+			outputWriter.writeNext(list);
+		
+		}
+	}
+	
+	public void writeTestCSVFile() {
+		
+		System.out.println("Writing test CSV file.");
+		
+		DataCreator dataCreator = new DataCreator();
+		LinkedList<String[]> games = dataCreator.generateTestSchedule();
+		
+		for (String[] list : games) {
+			
+			testWriter.writeNext(list);
+		
+		}
 		
 	}
 	
